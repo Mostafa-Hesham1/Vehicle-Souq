@@ -29,6 +29,18 @@ Vehicle Souq addresses critical challenges in Egypt's used car market, where inf
 
 This project is based on extensive research conducted by Mostafa Hisham, Hisham Ahmed, and Dr. Mohamed Labib from MSA University, Egypt. Our methodology combines computer vision with machine learning to deliver accurate car identification and pricing, even for users with limited automotive knowledge.
 
+## 📄 Research Paper
+
+This project has been published and presented at the 2025 Intelligent Methods, Systems, and Applications (IMSA) conference:
+
+**[Read the full paper on IEEE Xplore](https://ieeexplore.ieee.org/document/11167441)**
+
+<p align="center">
+  <img src="docs/Screenshot 2025-10-26 090816.png" alt="Conference Certificate of Participation" width="600"/>
+  <br />
+  <sub>Certificate of Participation - IMSA 2025 Conference</sub>
+</p>
+
 ## 🔍 The Problem
 
 Egypt's used car market faces several challenges:
@@ -245,9 +257,23 @@ npm start
 
 ## 📚 Citation
 
+If you use this project or find our research helpful, please cite our paper:
+
+```bibtex
+@INPROCEEDINGS{11167441,
+  author={Hesham, M. and Ahmed, H. and Borham, M. L.},
+  booktitle={2025 Intelligent Methods, Systems, and Applications (IMSA)}, 
+  title={Used Car Price Prediction and Classification Using Machine Learning Approaches}, 
+  year={2025},
+  pages={359-365},
+  doi={10.1109/IMSA65733.2025.11167441},
+  address={Giza, Egypt},
+  keywords={Adaptation models;Image recognition;Accuracy;Pricing;Machine learning;Manuals;Predictive models;Automobiles;Reliability;Vehicle dynamics;Used Car Market;Price Prediction;Image Recognition;XGBoost;DenseNet201}
+}
 ```
 
-```
+**IEEE Citation Format:**
+M. Hesham, H. Ahmed and M. L. Borham, "Used Car Price Prediction and Classification Using Machine Learning Approaches," 2025 Intelligent Methods, Systems, and Applications (IMSA), Giza, Egypt, 2025, pp. 359-365, doi: 10.1109/IMSA65733.2025.11167441.
 
 ## 📄 License
 
