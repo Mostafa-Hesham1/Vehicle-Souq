@@ -14,8 +14,9 @@ router = APIRouter()
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
-# Correct path to your new model (densenet201_best_model.pkl)
-MODEL_PATH = Path(r"C:\Users\mosta\OneDrive\Desktop\VehicleSouq (2)\VehicleSouq\backend\densenet201_best_model.pkl")
+# Relative path to the model - works on any OS
+BASE_DIR = Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+MODEL_PATH = BASE_DIR / "densenet201_best_model.pkl"
 
 # Global variable to hold the model
 learn = None
@@ -24,12 +25,15 @@ learn = None
 posix_backup = pathlib.PosixPath
 
 try:
-    # Replace PosixPath with WindowsPath for this session
+    # Cross-platform PosixPath workaround (needed when model was saved on Linux/Mac)
     pathlib.PosixPath = pathlib.WindowsPath
     
     # Load the model globally when the FastAPI app starts
-    learn = load_learner(MODEL_PATH)
-    logging.info(f"Model loaded successfully from: {MODEL_PATH}")
+    if MODEL_PATH.exists():
+        learn = load_learner(MODEL_PATH)
+        logging.info(f"Model loaded successfully from: {MODEL_PATH}")
+    else:
+        logging.error(f"Model file not found at: {MODEL_PATH}")
     
 finally:
     # Restore the original PosixPath

@@ -25,10 +25,14 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Create FastAPI app
 app = FastAPI()
 
-# Update CORS configuration to allow requests from the frontend
+# CORS - reads allowed origins from ALLOWED_ORIGINS env var (comma-separated)
+# Falls back to localhost for local development
+_raw_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000")
+ALLOWED_ORIGINS = [o.strip() for o in _raw_origins.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Add your frontend URL
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -715,5 +719,7 @@ app.include_router(damage_reports_router, prefix="/damage", tags=["damage_report
 
 if __name__ == "__main__":
     import uvicorn
-    logger.info("Starting server on port 8000")
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    port = int(os.getenv("PORT", 8000))
+    host = os.getenv("HOST", "0.0.0.0")
+    logger.info(f"Starting server on {host}:{port}")
+    uvicorn.run("main:app", host=host, port=port, reload=False)

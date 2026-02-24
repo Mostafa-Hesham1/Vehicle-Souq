@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 import logging
 import pickle
+import os
 from pathlib import Path
 import pandas as pd
 
@@ -10,10 +11,11 @@ router = APIRouter()
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
-# Load the model, scaler, and label encoders
-MODEL_PATH = Path(r"C:\Users\mosta\OneDrive\Desktop\VehicleSouq (2)\VehicleSouq\backend\ML-Models\Price-predection\PricePredection-1-.pkl")
-SCALER_PATH = Path(r"C:\Users\mosta\OneDrive\Desktop\VehicleSouq (2)\VehicleSouq\backend\ML-Models\Price-predection\scaler (1).pkl")
-ENCODERS_PATH = Path(r"C:\Users\mosta\OneDrive\Desktop\VehicleSouq (2)\VehicleSouq\backend\ML-Models\Price-predection\label_encoders.pkl")
+# Relative paths - works on any OS
+BASE_DIR = Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+MODEL_PATH = BASE_DIR / "ML-Models" / "Price-predection" / "PricePredection-1-.pkl"
+SCALER_PATH = BASE_DIR / "ML-Models" / "Price-predection" / "scaler (1).pkl"
+ENCODERS_PATH = BASE_DIR / "ML-Models" / "Price-predection" / "label_encoders.pkl"
 
 with open(MODEL_PATH, 'rb') as model_file:
     best_model = pickle.load(model_file)

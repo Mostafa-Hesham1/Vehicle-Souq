@@ -27,8 +27,9 @@ from torchvision.models.detection.anchor_utils import AnchorGenerator
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Add the mmdetection path if not already in sys.path
-mmdet_path = r"C:\Users\mosta\OneDrive\Desktop\VehicleSouq (2)\VehicleSouq\backend\mmdetection"
+# Add the mmdetection path if not already in sys.path - relative to this file
+_BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+mmdet_path = os.path.join(_BASE_DIR, "mmdetection")
 if mmdet_path not in sys.path:
     sys.path.append(mmdet_path)
 
@@ -76,11 +77,12 @@ class OptimizedCarDamageModel(nn.Module):
         return self.model(images, targets)
 
 router = APIRouter()
-# Update paths to the models
-YOLO_MODEL_PATH = r"C:\Users\mosta\OneDrive\Desktop\VehicleSouq (2)\VehicleSouq\backend\ML-Models\CarDamageModels\yolov8l_seg_car_damage.pt"
-DCN_CONFIG_PATH = r"C:\Users\mosta\OneDrive\Desktop\VehicleSouq (2)\VehicleSouq\backend\ML-Models\CarDamageModels\dcn_plus_cfg.py"
-DCN_CHECKPOINT_PATH = r"C:\Users\mosta\OneDrive\Desktop\VehicleSouq11\VehicleSouq (2)\VehicleSouq\backend\ML-Models\CarDamageModels\epoch_25_copy.pth"
-MASKRCNN_MODEL_PATH = r"C:\Users\mosta\OneDrive\Desktop\GRAD\New folder\Mask R-CNN with ResNet-50-FPN v2 backbone\anothermodle\bulletproof_cardd_model.pth"
+# Relative paths to the models - works on any OS
+_MODELS_DIR = os.path.join(_BASE_DIR, "ML-Models", "CarDamageModels")
+YOLO_MODEL_PATH = os.path.join(_MODELS_DIR, "yolov8l_seg_car_damage.pt")
+DCN_CONFIG_PATH = os.path.join(_MODELS_DIR, "dcn_plus_cfg.py")
+DCN_CHECKPOINT_PATH = os.path.join(_MODELS_DIR, "epoch_25_copy.pth")
+MASKRCNN_MODEL_PATH = os.path.join(_MODELS_DIR, "combined_cardamage_model.pt")
 
 # Define the class names and color mapping for visualization
 CLASS_NAMES = ['dent', 'scratch', 'crack', 'glass shatter', 'lamp broken', 'tire flat']

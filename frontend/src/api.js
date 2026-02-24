@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { Snackbar, Alert } from '@mui/material';
 import React from 'react';
 
-const API_URL = 'http://localhost:8000';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 // Configure axios defaults
 axios.defaults.baseURL = API_URL;
