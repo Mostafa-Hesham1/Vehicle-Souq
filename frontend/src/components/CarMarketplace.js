@@ -832,7 +832,7 @@ const CarMarketplace = () => {
                       <CardMedia
                         component="img"
                         height="200"
-                        image={listing.images && listing.images.length > 0 ? `/uploads/${listing.images[0]}` : '/default-car.jpg'}
+                        image={listing.images && listing.images.length > 0 ? `${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/uploads/${listing.images[0]}` : '/default-car.jpg'}
                         alt={listing.title}
                         sx={{ objectFit: 'cover' }}
                       />
