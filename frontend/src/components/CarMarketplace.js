@@ -51,6 +51,8 @@ import { styled } from '@mui/system';
 import { fetchCarListings } from '../api'; // Updated import name
 import { useAuth } from '../context/AuthContext';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
 // Styled components for better UI
 const StyledFilterPaper = styled(Paper)(({ theme }) => ({
   padding: theme?.spacing?.(3) || '24px',
@@ -163,43 +165,10 @@ const transmissionOptions = [
   "manual", "automatic"
 ];
 
-// Add this at the top - a hook to persist and track the user ID
-const useUserIdTracking = () => {
-  const { isAuthenticated, user, loading } = useAuth();
-  const [currentUserId, setCurrentUserId] = useState(null);
-
-  // Store user ID in session storage when authenticated
-  useEffect(() => {
-    if (!loading && isAuthenticated && user) {
-      const userId = user.user_id || user._id;
-      if (userId) {
-        setCurrentUserId(userId);
-        // Store in session storage to persist during refresh
-        sessionStorage.setItem('marketplace_user_id', userId);
-        console.log('User ID stored for filtering:', userId);
-      }
-    } else if (!loading && !isAuthenticated) {
-      // Clear stored ID when not authenticated
-      setCurrentUserId(null);
-      sessionStorage.removeItem('marketplace_user_id');
-    } else if (!loading && isAuthenticated && !currentUserId) {
-      // Attempt to restore from session storage if not in state yet
-      const storedId = sessionStorage.getItem('marketplace_user_id');
-      if (storedId) {
-        setCurrentUserId(storedId);
-        console.log('User ID restored from session storage:', storedId);
-      }
-    }
-  }, [isAuthenticated, user, loading, currentUserId]);
-
-  return { currentUserId, isLoadingUser: loading };
-};
-
 const CarMarketplace = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { isAuthenticated, user, loading: authLoading } = useAuth();
-  const { currentUserId, isLoadingUser } = useUserIdTracking();
+  const { loading: authLoading } = useAuth();
   
   // State for listings and loading
   const [listings, setListings] = useState([]);
@@ -251,7 +220,7 @@ const CarMarketplace = () => {
   // Fetch listings when filters change
   useEffect(() => {
     // Skip fetching until auth state is resolved
-    if (isLoadingUser) {
+    if (authLoading) {
       console.log('Waiting for user authentication state to resolve...');
       return;
     }
@@ -273,49 +242,12 @@ const CarMarketplace = () => {
           color: filters.color.length > 0 ? filters.color : undefined,
         };
         
-        // Add user ID to exclude their own listings if authenticated
-        // Use both session storage and auth context for redundancy
-        const userIdToExclude = currentUserId || 
-                              (isAuthenticated && user ? (user.user_id || user._id) : null) ||
-                              sessionStorage.getItem('marketplace_user_id');
-        
-        if (userIdToExclude) {
-          filterParams.exclude_user_id = userIdToExclude;
-          console.log(`Excluding user's own listings with ID: ${userIdToExclude}`);
-        }
-        
         console.log("Fetching listings with params:", filterParams);
         const response = await fetchCarListings(filterParams); // Updated function call
         
         // Handle the actual response format from our backend
         if (response && response.listings) {
-          // Apply client-side filtering as double verification
           let filteredListings = [...response.listings];
-          
-          if (userIdToExclude) {
-            const initialCount = filteredListings.length;
-            filteredListings = filteredListings.filter(listing => {
-              // Skip listings without owner_id
-              if (!listing.owner_id) return true;
-              
-              // Normalize and compare owner IDs
-              const ownerIdStr = String(listing.owner_id).trim();
-              const userIdStr = String(userIdToExclude).trim();
-              
-              // Debug owner IDs on refresh to help catch issues
-              if (ownerIdStr === userIdStr) {
-                console.warn(`Found listing that should have been filtered: ${listing.title} (${listing._id})`);
-                console.warn(`Owner ID: "${ownerIdStr}", User ID: "${userIdStr}"`);
-              }
-              
-              return ownerIdStr !== userIdStr;
-            });
-            
-            const removedCount = initialCount - filteredListings.length;
-            if (removedCount > 0) {
-              console.log(`Filtered out ${removedCount} user's own listings client-side`);
-            }
-          }
           
           // Calculate real pagination based on filtered results
           const totalItemCount = response.pagination?.total || filteredListings.length;
@@ -337,13 +269,6 @@ const CarMarketplace = () => {
               if (additionalResponse && additionalResponse.listings) {
                 // Apply the same filtering
                 let additionalFilteredListings = [...additionalResponse.listings];
-                
-                if (userIdToExclude) {
-                  additionalFilteredListings = additionalFilteredListings.filter(listing => {
-                    if (!listing.owner_id) return true;
-                    return String(listing.owner_id).trim() !== String(userIdToExclude).trim();
-                  });
-                }
                 
                 // Combine listings (up to itemsPerPage total)
                 const combinedListings = [
@@ -380,7 +305,7 @@ const CarMarketplace = () => {
     };
     
     fetchListings();
-  }, [filters, page, priceRange, isAuthenticated, user, currentUserId, isLoadingUser]);
+  }, [filters, page, priceRange, authLoading]);
   
   // Handle filter changes
   const handleFilterChange = (event) => {
@@ -459,7 +384,6 @@ const CarMarketplace = () => {
         </Typography>
         <Typography variant="subtitle1" color="text.secondary">
           Browse all available cars from our community. Filter, sort, and find your perfect match.
-          {isAuthenticated && <span style={{ fontStyle: 'italic' }}> Your own listings are not shown here.</span>}
         </Typography>
       </Box>
       
@@ -832,7 +756,7 @@ const CarMarketplace = () => {
                       <CardMedia
                         component="img"
                         height="200"
-                        image={listing.images && listing.images.length > 0 ? `${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/uploads/${listing.images[0]}` : '/default-car.jpg'}
+                        image={listing.images && listing.images.length > 0 ? `${API_URL}/uploads/${listing.images[0]}` : '/default-car.jpg'}
                         alt={listing.title}
                         sx={{ objectFit: 'cover' }}
                       />

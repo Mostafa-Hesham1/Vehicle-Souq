@@ -324,7 +324,7 @@ export const uploadCarListing = async (formData) => {
       throw new Error('Authentication token is missing. Please log in again.');
     }
 
-    const response = await fetch('http://localhost:8000/cars/list', {
+    const response = await fetch(`${API_URL}/cars/list`, {
       method: 'POST',
       body: formData,
       headers: {
@@ -351,7 +351,7 @@ export const fetchUserListings = async () => {
       throw new Error('Authentication token is missing. Please log in again.');
     }
 
-    const response = await fetch('http://localhost:8000/cars/my-listings', {
+    const response = await fetch(`${API_URL}/cars/my-listings`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -378,7 +378,7 @@ export const deleteCarListing = async (listingId) => {
       throw new Error('Authentication token is missing. Please log in again.');
     }
 
-    const response = await fetch(`http://localhost:8000/cars/${listingId}`, {
+    const response = await fetch(`${API_URL}/cars/${listingId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -410,9 +410,9 @@ export const getListingById = async (listingId) => {
     const token = localStorage.getItem('token');
     // Try multiple endpoint patterns to handle different backend configurations
     const endpoints = [
-      `http://localhost:8000/api/cars/listing/${listingId}`,
-      `http://localhost:8000/cars/listing/${listingId}`,
-      `http://localhost:8000/cars/${listingId}`
+      `${API_URL}/api/cars/listing/${listingId}`,
+      `${API_URL}/cars/listing/${listingId}`,
+      `${API_URL}/cars/${listingId}`
     ];
     
     let lastError = null;
@@ -458,7 +458,7 @@ export const updateCarListing = async (listingId, formData) => {
       throw new Error('Authentication token is missing. Please log in again.');
     }
     
-    const response = await fetch(`http://localhost:8000/cars/${listingId}`, {
+    const response = await fetch(`${API_URL}/cars/${listingId}`, {
       method: 'PUT',
       body: formData, // FormData object contains all the data including images
       headers: {
@@ -595,24 +595,6 @@ export const fetchCarListings = async (filters = {}, page = 1, limit = 24) => {
       headers 
     });
     
-    // If authenticated, filter out the user's own listings on the client side
-    if (token) {
-      try {
-        const user = JSON.parse(localStorage.getItem('user'));
-        const userId = user?.id;
-        
-        if (userId && response.data && response.data.listings) {
-          console.log(`Filtering out listings for user ID: ${userId}`);
-          response.data.listings = response.data.listings.filter(listing => {
-            return listing.owner_id !== userId;
-          });
-          console.log(`After filtering: ${response.data.listings.length} listings remain`);
-        }
-      } catch (err) {
-        console.error('Error filtering user listings:', err);
-      }
-    }
-    
     return response.data;
   } catch (error) {
     console.error('Error fetching car listings:', error.response || error.message);
@@ -621,10 +603,16 @@ export const fetchCarListings = async (filters = {}, page = 1, limit = 24) => {
     if (error.response?.status === 401) {
       try {
         console.log('Attempting fallback to public listings endpoint');
+        const fallbackFilters = Object.entries(filters).reduce((acc, [key, value]) => {
+          if (value !== undefined && value !== null && value !== '') {
+            acc[key] = value === 'undefined' ? '' : value;
+          }
+          return acc;
+        }, {});
         const params = new URLSearchParams({
           page,
           limit,
-          ...cleanFilters
+          ...fallbackFilters
         });
         const response = await axios.get(`/api/cars/listings?${params}`);
         return response.data;
