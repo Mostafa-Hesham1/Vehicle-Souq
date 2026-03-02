@@ -5,7 +5,7 @@
   
   ### AI-Powered Car Recognition, Price Prediction & Damage Detection System
   
-  [![Watch Demo](https://img.shields.io/badge/▶_Watch_Demo-Google_Drive-4285F4?style=for-the-badge&logo=google-drive&logoColor=white)](https://drive.google.com/file/d/102w9s_smjmn74-Jam3dtPNFl5tok_9UA/view?usp=sharing)
+  [![Watch Demo](https://img.shields.io/badge/▶_Watch_Demo-Google_Drive-4285F4?style=for-the-badge&logo=google-drive&logoColor=white)](https://drive.google.com/file/d/17VFbIcNtBgj67R0oMhLIZJMNMDFrKmlF/view?usp=sharing)
   [![Publication](https://img.shields.io/badge/📄_IEEE-Publication-00629B?style=for-the-badge&logo=ieee&logoColor=white)](https://ieeexplore.ieee.org/document/11167441)
   [![Thesis](https://img.shields.io/badge/📚_Thesis-Documentation-800080?style=for-the-badge&logo=academia&logoColor=white)](thesis/)
   [![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
@@ -14,7 +14,7 @@
 
   <br/>
 
-  <a href="https://drive.google.com/file/d/102w9s_smjmn74-Jam3dtPNFl5tok_9UA/view?usp=sharing">
+  <a href="https://drive.google.com/file/d/17VFbIcNtBgj67R0oMhLIZJMNMDFrKmlF/view?usp=sharing">
     <img src="frontend/public/picturefordemo.png" alt="Vehicle Souq Demo" width="700"/>
   </a>
   
